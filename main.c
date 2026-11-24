@@ -22,7 +22,8 @@ int main() {
 	setlocale(LC_ALL, "Portuguese");
 	int escolha = -1;
 
-	Hash *equipamentos = criarTabelaHash(67);
+	NoEquipamento *tabela[TAMANHO];
+	criarTabelaHash(tabela);
 	Arv *incidentes = Criar_Arvore();
 
 	do {
@@ -40,7 +41,7 @@ int main() {
 			// Consultar Equipamento e Incidente
 			break;
 		case 4:
-			// LIstar todos os Incidentes
+			// Listar todos os Incidentes
 			break;
 		case 5:
 			// Excluir um incidente
