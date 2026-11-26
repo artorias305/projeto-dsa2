@@ -32,9 +32,10 @@ int cadastrarEquipamento(NoEquipamento *vet[TAMANHO], Arv *arv) {
     return resultado;
 }
 
-int cadastrarIncidente(NoEquipamento *vet[TAMANHO], Arv *arv) {
+void cadastrarIncidente(NoEquipamento *vet[TAMANHO], Arv *arv) {
 	NoArv incidente;
 	int gravidade = 0;
+	int equipamentoEncontrado = 0;
 
     printf("Digite o ID do incidente: ");
     scanf("%d", &incidente.id);
@@ -46,10 +47,49 @@ int cadastrarIncidente(NoEquipamento *vet[TAMANHO], Arv *arv) {
     scanf(" %d", &incidente.gravidade);
 
 	while (gravidade > 3 || gravidade < 1) {
-		printf("\nGRAVIDADE INCORRETA\n");
 		printf("Digite o nível de gravidade: ");
 		scanf(" %d", &incidente.gravidade);
+		gravidade = &incidente.gravidade;
 	}
+
+	while (!equipamentoEncontrado) {
+		NoEquipamento *eq = buscarEquipamento(vet, &incidente.codigo_equipamento, arv);
+		if (eq != NULL) {
+			break;
+		}
+		printf("\nEQUIPAMENTO NÃO ENCONTRADO\n");
+	}
+}
+
+void excluirIncidente(Arv *arv) {
+	int incidenteEncontrado = 0;
+	int idIncidente = 0;
+
+	while (!incidenteEncontrado) {
+		printf("Digite o ID do incidente: ");
+    	scanf("%d", &idIncidente);
+
+		int achou = remover(arv, idIncidente);
+
+		if (achou == 1) {
+			break;
+		}
+		printf("\nINCIDENTE NÃO ENCONTRADO\n");
+	}
+}
+
+void consultarEqEIncidentes(NoEquipamento *vet[TAMANHO], Arv *arv) {
+
+}
+
+int excluirEquipamento(NoEquipamento *vet[TAMANHO]) {
+	int codigoEquipmanneto;
+
+	printf("Digite o código do equipamento: ");
+    scanf(" %d", codigoEquipmanneto);
+
+	int resultado = excluirEq(vet, codigoEquipmanneto);
+	return resultado;
 }
 
 int main() {
@@ -77,12 +117,15 @@ int main() {
 			break;
 		case 4:
 			// Listar todos os Incidentes
+			imprime_InOrder(incidentes);
 			break;
 		case 5:
 			// Excluir um incidente
+			excluirIncidente(incidentes);
 			break;
 		case 6:
 			// Excluir um Equipamento
+			excluirEquipamento(tabela);
 			break;
 		default:
 			if (escolha != 7) {

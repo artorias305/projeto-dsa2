@@ -29,7 +29,7 @@ int funcaoHashId(int id) {
 	return indice;
 }
 
-NoEquipamento *buscarEquipamento(NoEquipamento *vet[TAMANHO], int id, Arv *arv) {
+NoEquipamento *buscarEquipamentoEIncidente(NoEquipamento *vet[TAMANHO], int id, Arv *arv) {
 	int indice = funcaoHashId(id);
 
 	NoEquipamento *atual = vet[indice];
@@ -41,6 +41,13 @@ NoEquipamento *buscarEquipamento(NoEquipamento *vet[TAMANHO], int id, Arv *arv) 
 		atual = atual->prox;
 	}
 	return NULL;
+}
+
+NoEquipamento *buscarEquipamento(NoEquipamento *vet[TAMANHO], int id, Arv *arv) {
+	int indice = funcaoHashId(id);
+
+	NoEquipamento *atual = vet[indice];
+	return atual;
 }
 
 int inserirEquipamento(NoEquipamento *vet[TAMANHO], Equipamento eq, Arv *arv) {
@@ -55,14 +62,44 @@ int inserirEquipamento(NoEquipamento *vet[TAMANHO], Equipamento eq, Arv *arv) {
 	}
 
 	NoEquipamento *novo = (NoEquipamento *)malloc(sizeof(Equipamento));
+	novo->equipamento = malloc(sizeof(Equipamento));
 
-	novo->equipamento = &eq;
+	*novo->equipamento = eq;
 
 	int indice = funcaoHashId(eq.id);
 	novo->prox = vet[indice];
 	vet[indice] = novo;
 
 	return 1;
+}
+
+int excluirEq(NoEquipamento *vet[TAMANHO], int id) {
+	int indice = funcaoHashId(id);
+
+	NoEquipamento *atual = vet[indice];
+	NoEquipamento *ant = NULL;
+
+	while (atual != NULL) {
+		if (atual->equipamento->id == id) {
+			if (ant == NULL) {
+				vet[indice] = atual->prox;
+			} else {
+				ant->prox = atual->prox;
+			}
+
+			free(atual->equipamento);
+			free(atual);
+
+			printf("Equipamento removido com sucesso.\n");
+			return 1;
+		}
+
+		ant = atual;
+		atual = atual->prox;
+	}
+
+	printf("Equipamento não encontrado\n");
+	return 0;
 }
 
 #endif
