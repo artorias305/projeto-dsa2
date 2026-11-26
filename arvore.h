@@ -145,15 +145,15 @@ int remover(Arv *RAIZ, int num) {
 	return achou;
 }
 
-NoArv *remover_aux(NoArv *pai, int num, int *achou) {
+NoArv *remover_aux(NoArv *pai, int id, int *achou) {
 	if (pai == NULL) {
 		return NULL;
 	} else {
-		if (num > pai->id) {
-			pai->dir = remover_aux(pai->dir, num, achou);
+		if (id > pai->id) {
+			pai->dir = remover_aux(pai->dir, id, achou);
 		} else {
-			if (num < pai->id) {
-				pai->esq = remover_aux(pai->esq, num, achou);
+			if (id < pai->id) {
+				pai->esq = remover_aux(pai->esq, id, achou);
 			} else {
 				*achou = 1;
 
@@ -179,8 +179,8 @@ NoArv *remover_aux(NoArv *pai, int num, int *achou) {
 							pai->id = aux->id;
 							pai->codigo_equipamento = aux->codigo_equipamento;
 							pai->gravidade = aux->gravidade;
-							aux->id = num;
-							pai->esq = remover_aux(pai->esq, num, achou);
+							aux->id = id;
+							pai->esq = remover_aux(pai->esq, id, achou);
 						}
 					}
 				}

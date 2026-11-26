@@ -18,9 +18,9 @@ typedef struct NoEquipamento {
 } NoEquipamento;
 
 void criarTabelaHash(NoEquipamento *vet[TAMANHO]) {
-    for (int i = 0; i < TAMANHO; i++) {
-        vet[i] = NULL;
-    }
+	for (int i = 0; i < TAMANHO; i++) {
+		vet[i] = NULL;
+	}
 }
 
 int funcaoHashId(int id) {
@@ -29,21 +29,23 @@ int funcaoHashId(int id) {
 	return indice;
 }
 
-NoEquipamento *buscarEquipamentoEIncidente(NoEquipamento *vet[TAMANHO], int id, Arv *arv) {
+NoEquipamento *buscarEquipamentoEIncidente(NoEquipamento *vet[TAMANHO], int id,
+										   Arv *arv) {
 	int indice = funcaoHashId(id);
 
 	NoEquipamento *atual = vet[indice];
 	while (atual != NULL) {
-	    NoArv *no = busca(arv, id);
+		NoArv *no = busca(arv, id);
 		if (no) {
-		    return atual;
+			return atual;
 		}
 		atual = atual->prox;
 	}
 	return NULL;
 }
 
-NoEquipamento *buscarEquipamento(NoEquipamento *vet[TAMANHO], int id, Arv *arv) {
+NoEquipamento *buscarEquipamento(NoEquipamento *vet[TAMANHO], int id,
+								 Arv *arv) {
 	int indice = funcaoHashId(id);
 
 	NoEquipamento *atual = vet[indice];
@@ -62,7 +64,7 @@ int inserirEquipamento(NoEquipamento *vet[TAMANHO], Equipamento eq, Arv *arv) {
 	}
 
 	NoEquipamento *novo = (NoEquipamento *)malloc(sizeof(Equipamento));
-	novo->equipamento = malloc(sizeof(Equipamento));
+	novo->equipamento = (Equipamento *)malloc(sizeof(Equipamento));
 
 	*novo->equipamento = eq;
 
