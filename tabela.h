@@ -13,7 +13,6 @@ typedef struct {
 } Equipamento;
 
 typedef struct NoEquipamento {
-	int idIncidente;
 	Equipamento *equipamento;
 	struct NoEquipamento *prox;
 } NoEquipamento;
@@ -30,14 +29,14 @@ int funcaoHashId(int id) {
 	return indice;
 }
 
-Equipamento *buscarEquipamento(NoEquipamento *vet[TAMANHO], int id, Arv *arv) {
+NoEquipamento *buscarEquipamento(NoEquipamento *vet[TAMANHO], int id, Arv *arv) {
 	int indice = funcaoHashId(id);
 
 	NoEquipamento *atual = vet[indice];
 	while (atual != NULL) {
 	    NoArv *no = busca(arv, id);
 		if (no) {
-		    return atual->equipamento;
+		    return atual;
 		}
 		atual = atual->prox;
 	}
@@ -58,7 +57,6 @@ int inserirEquipamento(NoEquipamento *vet[TAMANHO], Equipamento eq, Arv *arv) {
 	NoEquipamento *novo = (NoEquipamento *)malloc(sizeof(Equipamento));
 
 	novo->equipamento = &eq;
-	novo->idIncidente = NULL;
 
 	int indice = funcaoHashId(eq.id);
 	novo->prox = vet[indice];

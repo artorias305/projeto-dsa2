@@ -18,6 +18,40 @@ void printMenu() {
 		"\nEscolha: ");
 }
 
+int cadastrarEquipamento(NoEquipamento *vet[TAMANHO], Arv *arv) {
+    Equipamento equipamento;
+
+    printf("Digite o ID do equipamento: ");
+    scanf("%d", &equipamento.id);
+
+    printf("Digite o nome do equipamento: ");
+    scanf(" %10[^\n]", equipamento.nome);
+
+    int resultado = inserirEquipamento(vet, equipamento, arv);
+
+    return resultado;
+}
+
+int cadastrarIncidente(NoEquipamento *vet[TAMANHO], Arv *arv) {
+	NoArv incidente;
+	int gravidade = 0;
+
+    printf("Digite o ID do incidente: ");
+    scanf("%d", &incidente.id);
+
+    printf("Digite o código do equipamento: ");
+    scanf(" %d", &incidente.codigo_equipamento);
+
+	printf("Digite o nível de gravidade: ");
+    scanf(" %d", &incidente.gravidade);
+
+	while (gravidade > 3 || gravidade < 1) {
+		printf("\nGRAVIDADE INCORRETA\n");
+		printf("Digite o nível de gravidade: ");
+		scanf(" %d", &incidente.gravidade);
+	}
+}
+
 int main() {
 	setlocale(LC_ALL, "Portuguese");
 	int escolha = -1;
@@ -32,10 +66,11 @@ int main() {
 
 		switch (escolha) {
 		case 1:
-			// cadastrar equipamento
+			cadastrarEquipamento(tabela, incidentes);
 			break;
 		case 2:
 			// Registrar incidente
+			cadastrarIncidente(tabela, incidentes);
 			break;
 		case 3:
 			// Consultar Equipamento e Incidente
