@@ -25,7 +25,7 @@ int cadastrarEquipamento(NoEquipamento *vet[TAMANHO], Arv *arv) {
 	scanf("%d", &equipamento.id);
 
 	printf("Digite o nome do equipamento: ");
-	scanf(" %10[^\n]", equipamento.nome);
+	scanf("%10s", equipamento.nome);
 
 	int resultado = inserirEquipamento(vet, equipamento, arv);
 
@@ -34,7 +34,6 @@ int cadastrarEquipamento(NoEquipamento *vet[TAMANHO], Arv *arv) {
 
 void cadastrarIncidente(NoEquipamento *vet[TAMANHO], Arv *arv) {
 	NoArv incidente;
-	int gravidade = 0;
 
 	do {
 		printf("Digite o ID do incidente: ");
@@ -64,20 +63,22 @@ void cadastrarIncidente(NoEquipamento *vet[TAMANHO], Arv *arv) {
 }
 
 void excluirIncidente(Arv *arv) {
-	int incidenteEncontrado = 0;
 	int idIncidente = 0;
 
-	while (!incidenteEncontrado) {
+	do {
 		printf("Digite o ID do incidente: ");
 		scanf("%d", &idIncidente);
 
 		int achou = remover(arv, idIncidente);
 
-		if (achou == 1) {
+		if (achou) {
+			printf("Incidente removido.\n");
 			break;
 		}
-		printf("\nINCIDENTE NÃO ENCONTRADO\n");
-	}
+
+		printf("Incidente não encontrado.\n");
+
+	} while (idIncidente < 10 || idIncidente > 99);
 }
 
 void consultarEqEIncidentes(NoEquipamento *vet[TAMANHO], Arv *arv) {
@@ -92,15 +93,19 @@ void consultarEqEIncidentes(NoEquipamento *vet[TAMANHO], Arv *arv) {
 	if (eq == NULL) {
 		printf("Equipamento não encontrado\n");
 	} else {
-
+		imprimirEquipamento(*eq->equipamento);
 	}
+
+	printf("\nINCIDENTES RELACIONADOS: \n\n");
+
+	imprime_InOrder(arv->raiz, eq->equipamento->id);
 }
 
 int excluirEquipamento(NoEquipamento *vet[TAMANHO]) {
-	int codigoEquipmanneto;
+	int codigoEquipmanneto = 0;
 
 	printf("Digite o código do equipamento: ");
-	scanf(" %d", codigoEquipmanneto);
+	scanf(" %d", &codigoEquipmanneto);
 
 	int resultado = excluirEq(vet, codigoEquipmanneto);
 	return resultado;
@@ -123,21 +128,18 @@ int main() {
 			cadastrarEquipamento(tabela, incidentes);
 			break;
 		case 2:
-			// Registrar incidente
 			cadastrarIncidente(tabela, incidentes);
 			break;
 		case 3:
-			// Consultar Equipamento e Incidente
+			consultarEqEIncidentes(tabela, incidentes);
 			break;
 		case 4:
-			imprime_InOrder(incidentes->raiz);
+			imprime_InOrder(incidentes->raiz, 0);
 			break;
 		case 5:
-			// Excluir um incidente
 			excluirIncidente(incidentes);
 			break;
 		case 6:
-			// Excluir um Equipamento
 			excluirEquipamento(tabela);
 			break;
 		default:

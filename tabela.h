@@ -75,6 +75,12 @@ int inserirEquipamento(NoEquipamento *vet[TAMANHO], Equipamento eq, Arv *arv) {
 	return 1;
 }
 
+void imprimirEquipamento(Equipamento eq) {
+	printf("\n\tID do equipamento: %d\n", eq.id);
+
+	printf("\n\tNome do equipamento: %s\n", eq.nome);
+}
+
 int excluirEq(NoEquipamento *vet[TAMANHO], int id) {
 	int indice = funcaoHashId(id);
 

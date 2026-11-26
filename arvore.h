@@ -26,7 +26,7 @@ int remover(Arv *RAIZ, int num);
 NoArv *remover_aux(NoArv *pai, int num, int *achou);
 
 void imprime_No(NoArv *no);
-void imprime_InOrder(NoArv *pai);
+void imprime_InOrder(NoArv *pai, int idEquipamento);
 
 void liberaArvore(NoArv *pai);
 
@@ -197,11 +197,15 @@ void imprime_No(NoArv *no) {
 	}
 }
 
-void imprime_InOrder(NoArv *pai) {
+void imprime_InOrder(NoArv *pai, int idEquipamento) {
 	if (pai != NULL) {
-		imprime_InOrder(pai->esq);
-		imprime_No(pai);
-		imprime_InOrder(pai->dir);
+		imprime_InOrder(pai->esq, idEquipamento);
+		if (pai->codigo_equipamento == idEquipamento && idEquipamento) {
+			imprime_No(pai);
+		} else {
+			imprime_No(pai);
+		}
+		imprime_InOrder(pai->dir, idEquipamento);
 	}
 }
 
