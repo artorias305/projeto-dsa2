@@ -57,8 +57,16 @@ void cadastrarIncidente(NoEquipamento *vet[TAMANHO], Arv *arv) {
 			scanf(" %d", &incidente.gravidade);
 		} while (incidente.gravidade > 3 || incidente.gravidade < 1);
 
-		insere(arv, incidente.id, incidente.codigo_equipamento,
-			   incidente.gravidade);
+		int resultado = insere(arv, incidente.id, incidente.codigo_equipamento,
+							   incidente.gravidade);
+
+		if (resultado == 1) {
+			printf("Incidente registrado.\n");
+		} else if (resultado == 0) {
+			printf("Já existe um incidente com esse ID.\n");
+		} else {
+			printf("Não foi possível cadastrar: dados inválidos.\n");
+		}
 	}
 }
 
