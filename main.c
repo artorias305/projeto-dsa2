@@ -18,8 +18,9 @@ void printMenu() {
 		"\nEscolha: ");
 }
 
-int cadastrarEquipamento(NoEquipamento *vet[TAMANHO], Arv *arv) {
+int cadastrarEquipamento(NoEquipamento *vet[TAMANHO]) {
 	Equipamento equipamento;
+	int resultado;
 
 	printf("Digite o ID do equipamento: ");
 	scanf("%d", &equipamento.id);
@@ -27,13 +28,15 @@ int cadastrarEquipamento(NoEquipamento *vet[TAMANHO], Arv *arv) {
 	printf("Digite o nome do equipamento: ");
 	scanf("%10s", equipamento.nome);
 
-	int resultado = inserirEquipamento(vet, equipamento, arv);
+	resultado = inserirEquipamento(vet, equipamento);
 
 	return resultado;
 }
 
 void cadastrarIncidente(NoEquipamento *vet[TAMANHO], Arv *arv) {
 	NoArv incidente;
+	NoEquipamento *eq;
+	int resultado;
 
 	do {
 		printf("Digite o ID do incidente: ");
@@ -46,40 +49,56 @@ void cadastrarIncidente(NoEquipamento *vet[TAMANHO], Arv *arv) {
 	} while (incidente.codigo_equipamento < 1000 ||
 			 incidente.codigo_equipamento > 9999);
 
-	NoEquipamento *eq =
-		buscarEquipamento(vet, incidente.codigo_equipamento, arv);
+	eq = buscarEquipamento(vet, incidente.codigo_equipamento);
 
-	if (eq == NULL) {
-		printf("\nEQUIPAMENTO NÃO ENCONTRADO\n");
-	} else {
+	if (eq != NULL) {
 		do {
 			printf("Digite o nível de gravidade: ");
 			scanf(" %d", &incidente.gravidade);
 		} while (incidente.gravidade > 3 || incidente.gravidade < 1);
 
-		int resultado = insere(arv, incidente.id, incidente.codigo_equipamento,
-							   incidente.gravidade);
+		resultado = insere(arv, incidente.id, incidente.codigo_equipamento,
+						   incidente.gravidade);
 
 		if (resultado == 1) {
+			inserirReferenciaIncidente(eq, incidente.id);
 			printf("Incidente registrado.\n");
 		} else if (resultado == 0) {
 			printf("Já existe um incidente com esse ID.\n");
 		} else {
 			printf("Não foi possível cadastrar: dados inválidos.\n");
 		}
+	} else {
+		printf("\nEQUIPAMENTO NÃO ENCONTRADO\n");
 	}
 }
 
-void excluirIncidente(Arv *arv) {
+void excluirIncidente(Arv *arv, NoEquipamento *vet[TAMANHO]) {
 	int idIncidente = 0;
+	int codigoEquipamento;
+	int achou;
+	NoArv *no;
+	NoEquipamento *eq;
 
 	do {
 		printf("Digite o ID do incidente: ");
 		scanf("%d", &idIncidente);
 
-		int achou = remover(arv, idIncidente);
+		no = busca(arv, idIncidente);
+
+		if (no == NULL) {
+			codigoEquipamento = 0;
+		} else {
+			codigoEquipamento = no->codigo_equipamento;
+		}
+
+		achou = remover(arv, idIncidente);
 
 		if (achou) {
+			if (codigoEquipamento != 0) {
+				eq = buscarEquipamento(vet, codigoEquipamento);
+				removerReferenciaIncidente(eq, idIncidente);
+			}
 			printf("Incidente removido.\n");
 			break;
 		}
@@ -91,41 +110,44 @@ void excluirIncidente(Arv *arv) {
 
 void consultarEqEIncidentes(NoEquipamento *vet[TAMANHO], Arv *arv) {
 	int codigo_equipamento = 0;
+	NoEquipamento *eq;
+
 	do {
 		printf("Insira o código do equipamento: ");
 		scanf("%d", &codigo_equipamento);
 	} while (codigo_equipamento < 1000 || codigo_equipamento > 9999);
 
-	NoEquipamento *eq = buscarEquipamento(vet, codigo_equipamento, arv);
+	eq = buscarEquipamento(vet, codigo_equipamento);
 
 	if (eq == NULL) {
 		printf("Equipamento não encontrado\n");
 	} else {
 		imprimirEquipamento(*eq->equipamento);
+
+		printf("\nINCIDENTES RELACIONADOS: \n\n");
+		imprimirIncidentesEquipamento(eq, arv);
 	}
-
-	printf("\nINCIDENTES RELACIONADOS: \n\n");
-
-	imprime_InOrder(arv->raiz, eq->equipamento->id);
 }
 
-int excluirEquipamento(NoEquipamento *vet[TAMANHO]) {
+int excluirEquipamento(NoEquipamento *vet[TAMANHO], Arv *arv) {
 	int codigoEquipmanneto = 0;
+	int resultado;
 
 	printf("Digite o código do equipamento: ");
 	scanf(" %d", &codigoEquipmanneto);
 
-	int resultado = excluirEq(vet, codigoEquipmanneto);
+	resultado = excluirEq(vet, codigoEquipmanneto, arv);
 	return resultado;
 }
 
 int main() {
-	setlocale(LC_ALL, "Portuguese");
 	int escolha = -1;
-
 	NoEquipamento *tabela[TAMANHO];
+	Arv *incidentes;
+
+	setlocale(LC_ALL, "Portuguese");
 	criarTabelaHash(tabela);
-	Arv *incidentes = Criar_Arvore();
+	incidentes = Criar_Arvore();
 
 	do {
 		printMenu();
@@ -133,7 +155,7 @@ int main() {
 
 		switch (escolha) {
 		case 1:
-			cadastrarEquipamento(tabela, incidentes);
+			cadastrarEquipamento(tabela);
 			break;
 		case 2:
 			cadastrarIncidente(tabela, incidentes);
@@ -145,19 +167,20 @@ int main() {
 			imprime_InOrder(incidentes->raiz, 0);
 			break;
 		case 5:
-			excluirIncidente(incidentes);
+			excluirIncidente(incidentes, tabela);
 			break;
 		case 6:
-			excluirEquipamento(tabela);
+			excluirEquipamento(tabela, incidentes);
 			break;
 		default:
 			if (escolha != 7) {
-				printf("Escolha inv�lida.\n");
+				printf("Escolha inválida.\n");
 			}
 			break;
 		}
 	} while (escolha != 7);
 
+	liberarTabela(tabela);
 	liberaArvore(incidentes->raiz);
 	free(incidentes);
 
